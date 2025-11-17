@@ -1,0 +1,4 @@
+100
+https://arilpiod:77434861b1a0904147cd3de57be7b0e2d6aff912@infosec24.ru/git/arilpiod/Lab-01.git branch main
+big text
+biggg
