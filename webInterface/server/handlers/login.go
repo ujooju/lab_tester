@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	httpcurl "github.com/ujooju/http-curl/lib"
 	"github.com/ujooju/lab_tester/webInterface/config"
+	"github.com/ujooju/lab_tester/webInterface/storage"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,6 +20,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
+	}
+
+	cookie, err := r.Cookie("lt_user_id")
+	if err == nil {
+		if _, ok := storage.Cache[cookie.Value]; ok {
+			fmt.Println("ooookkkkk")
+			http.Redirect(w, r, "/home", http.StatusSeeOther)
+			return
+		}
 	}
 
 	fmt.Println(w, r.URL.RawQuery)
@@ -32,7 +43,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "OAuth callback received with state: %s\n", state)
+	//fmt.Fprintf(w, "OAuth callback received with state: %s\n", state)
 
 	code := r.URL.Query().Get("code")
 	if code == "" {
@@ -74,8 +85,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, string(response))
-
+	userID := uuid.New().String()
+	storage.Cache[userID] = storage.CacheEntity{
+		Token: accessTokenResponse.AccessToken,
+	}
+	fmt.Println(storage.Cache)
+	http.SetCookie(w, &http.Cookie{
+		Name:  "lt_user_id",
+		Value: userID,
+	})
+	//fmt.Fprintln(w, userID)
+	//fmt.Fprintln(w, string(response))
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 type GiteaAccessTokenRequest struct {

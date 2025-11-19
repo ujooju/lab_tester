@@ -31,7 +31,7 @@ func RunHandler(w http.ResponseWriter, r *http.Request) {
 
 	report, err := cage.StartTest(&testInfo, time.Second*100)
 	if err != nil {
-		http.Error(w, "internal error while running tests", http.StatusInternalServerError)
+		http.Error(w, "internal error while running tests\n"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

@@ -10,8 +10,8 @@ var (
 	GitURLProtoName string = "" //sets automatically
 	GitURLHostName  string = "" //sets automatically
 	ScriptName      string = "script.sh"
-	ScriptLocation  string = "."
-	DatabaseURL     string = ""
+	ScriptLocation  string = "." //относительно main.go
+	DatabaseURL     string = ""  //to be done
 )
 
 func Configure() error {
