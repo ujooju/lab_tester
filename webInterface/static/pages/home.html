@@ -27,7 +27,7 @@
 
 <script>
 // Пример API — можно подставить свой URL
-const API_URL_CUR_TASK = "/api/task-forks";
+const API_URL_CUR_TASK = "/api/list-forks";
 
 async function loadTable() {
     const response = await fetch(API_URL_CUR_TASK);
@@ -68,12 +68,11 @@ async function loadTable() {
             } 
             else if (key.toLowerCase() === "url") {
             }
-            else if (key.toLowerCase() === "test_url" && item[key]) {
+            else if (key.toLowerCase() === "fork_status_url" && item[key]) {
                 const td = document.createElement("td");
                 const a = document.createElement("a");
                 a.href = item[key];
-                a.textContent = "start test";
-                a.target = "_blank";
+                a.textContent = "status";
                 td.appendChild(a);
                 row.appendChild(td);
             }

@@ -10,7 +10,7 @@ import (
 	"github.com/ujooju/lab_tester/webInterface/config"
 )
 
-func TaskForksHandler(w http.ResponseWriter, r *http.Request) {
+func ListForksHandler(w http.ResponseWriter, r *http.Request) {
 	forks := []*gitea.Repository{}
 	reqUrl := config.GiteaURL + "/api/v1/repos/" + config.CurrentTaskOwner + "/" + config.CurrentTaskName + "/forks?access_token=" + r.Context().Value("token").(string)
 	response, err := httpcurl.HttpCurl(httpcurl.CurlOption{
@@ -32,14 +32,14 @@ func TaskForksHandler(w http.ResponseWriter, r *http.Request) {
 	resp := []TaskFork{}
 	for _, fork := range forks {
 		taskFork := TaskFork{
-			Owner:        fork.Owner.UserName,
-			Name:         fork.Name,
-			Branch:       fork.DefaultBranch,
-			URL:          fork.HTMLURL,
-			Status:       "to be done",
-			Result:       "to be done",
-			ReportURL:    "to be done",
-			StartTestURL: "/api/start-test?",
+			Owner:         fork.Owner.UserName,
+			Name:          fork.Name,
+			URL:           fork.HTMLURL,
+			Status:        "to be done",
+			Result:        "to be done",
+			SubmitsCnt:    "tbd",
+			ReportURL:     "to be done",
+			ForkStatusURL: "/home/fork?owner=" + fork.Owner.UserName + "&name=" + fork.Name,
 		}
 		resp = append(resp, taskFork)
 	}
@@ -52,12 +52,12 @@ func TaskForksHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type TaskFork struct {
-	Owner        string `json:"owner"`
-	Name         string `json:"name"`
-	Branch       string `json:"branch"`
-	Status       string `json:"status"`
-	Result       string `json:"result"`
-	URL          string `json:"url"`
-	ReportURL    string `json:"report_url"`
-	StartTestURL string `json:"test_url"`
+	Owner         string `json:"owner"`
+	Name          string `json:"name"`
+	Status        string `json:"status"`
+	Result        string `json:"result"`
+	URL           string `json:"url"`
+	SubmitsCnt    string `json:"cnt"`
+	ReportURL     string `json:"report_url"`
+	ForkStatusURL string `json:"fork_status_url"`
 }

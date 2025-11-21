@@ -3,16 +3,18 @@ package config
 import (
 	"errors"
 	"os"
+	"strings"
 )
 
 var (
 	GiteaURL                string = ""
 	GiteaClientID           string
 	GiteaSecret             string
-	GiteaRedirectURI        string = ""
-	GiteaOauthCallbackState string = ""
-	CurrentTaskOwner        string = ""
-	CurrentTaskName         string = ""
+	GiteaRedirectURI        string   = ""
+	GiteaOauthCallbackState string   = ""
+	CurrentTaskOwner        string   = ""
+	CurrentTaskName         string   = ""
+	Admins                  []string = []string{}
 )
 
 func Confgure() error {
@@ -63,6 +65,14 @@ func Confgure() error {
 	}
 	if CurrentTaskName == "" {
 		return errors.New("missing LT_CUR_TASK_NAME setting")
+	}
+
+	if len(Admins) == 0 {
+		adminsStr := os.Getenv("LT_ADMINS")
+		Admins = strings.Split(adminsStr, ",")
+	}
+	if len(Admins) == 0 {
+		return errors.New("missing LT_ADMINS setting")
 	}
 
 	return nil
