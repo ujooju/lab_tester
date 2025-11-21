@@ -58,8 +58,15 @@ async function loadTable(tableId, apiURL) {
         const row = document.createElement("tr");
         headers.forEach(key => {
             const td = document.createElement("td");
+            if (key === "submit_url") {
+                const a = document.createElement("a")
+                a.href = item[key]
+                a.textContent = "submit"
+                td.appendChild(a)
+            } else {
             td.textContent = 
                 typeof item[key] === "object" ? JSON.stringify(item[key]) : item[key];
+            }
             row.appendChild(td);
         });
         table.appendChild(row);

@@ -2,11 +2,14 @@ package config
 
 import (
 	"errors"
+	"log"
 	"os"
 	"strings"
 )
 
 var (
+	Host                    string
+	Port                    string
 	GiteaURL                string = ""
 	GiteaClientID           string
 	GiteaSecret             string
@@ -15,9 +18,25 @@ var (
 	CurrentTaskOwner        string   = ""
 	CurrentTaskName         string   = ""
 	Admins                  []string = []string{}
+	AgentSecret             string
 )
 
 func Confgure() error {
+	if Port == "" {
+		Port = os.Getenv("LT_PORT")
+	}
+	if Port == "" {
+		return errors.New("missing LT_PORT setting")
+	}
+
+	if Host == "" {
+		Host = os.Getenv("LT_HOST")
+	}
+	if Host == "" {
+		Host = "127.0.0.1"
+		log.Println("using host 127.0.0.1")
+	}
+
 	if GiteaURL == "" {
 		GiteaURL = os.Getenv("LT_GITEA_URL")
 	}
@@ -73,6 +92,13 @@ func Confgure() error {
 	}
 	if len(Admins) == 0 {
 		return errors.New("missing LT_ADMINS setting")
+	}
+
+	if AgentSecret == "" {
+		AgentSecret = os.Getenv("LT_AGENT_SECRET")
+	}
+	if AgentSecret == "" {
+		return errors.New("missing LT_AGENT_SECRET setting")
 	}
 
 	return nil

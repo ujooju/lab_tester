@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/ujooju/lab_tester/webInterface/config"
 	"github.com/ujooju/lab_tester/webInterface/server/api"
 	"github.com/ujooju/lab_tester/webInterface/server/handlers"
 	"github.com/ujooju/lab_tester/webInterface/server/middlewares"
@@ -11,7 +12,7 @@ import (
 func Start() {
 	mux := setMux()
 
-	http.ListenAndServe(":3001", mux)
+	http.ListenAndServe(config.Host+":"+config.Port, mux)
 }
 
 func setMux() *http.ServeMux {
@@ -23,10 +24,13 @@ func setMux() *http.ServeMux {
 	loginMux.HandleFunc("/logout", handlers.LogoutHandler)
 
 	apiMux := http.NewServeMux()
-	apiMux.HandleFunc("/api/list-forks", api.ListForksHandler)
-	apiMux.HandleFunc("/api/fork-branches", api.ListBranchesHandler)
-	apiMux.HandleFunc("/api/list-tests", api.ListTestsHandler)
+	apiMux.HandleFunc("GET /api/list-forks", api.ListForksHandler)
+	apiMux.HandleFunc("GET /api/fork-branches", api.ListBranchesHandler)
+	apiMux.HandleFunc("GET /api/list-tests", api.ListTestsHandler)
 	apiMux.HandleFunc("/api/submit", api.SubmitHandler)
+	apiMux.HandleFunc("GET /api/next-test", api.NextTestHandler)
+	//apiMux.HandleFunc("POST /api/report", api.PostReportHandler)
+	//apiMux.HandleFunc("GET /api/report", api.GetReportHandler)
 
 	homeMux := http.NewServeMux()
 	homeMux.HandleFunc("/home/", handlers.HomePageHandler)

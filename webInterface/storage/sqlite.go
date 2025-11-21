@@ -58,3 +58,14 @@ func SubmutTest(owner string, name string, branch string) error {
 	}
 	return nil
 }
+
+func NextTest() (models.TestRecord, error) {
+	nextTest := models.TestRecord{}
+	query := `SELECT id, owner, name, branch, status, report FROM test_records WHERE status = "submited" ORDER BY id ASC`
+	row := DB.QueryRow(query)
+	err := row.Scan(&nextTest.ID, &nextTest.Owner, &nextTest.RepoName, &nextTest.Branch, &nextTest.Status, &nextTest.Report)
+	if err != nil {
+		return models.TestRecord{}, err
+	}
+	return nextTest, nil
+}
