@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Таблица из JSON</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Данные из API</h2>
+<h2><a href="/logout">logout</a></h2>
+<table id="data-table"></table>
+
+<script>
+// Пример API — можно подставить свой URL
+const API_URL_CUR_TASK = "/api/list-forks";
+
+async function loadTable() {
+    const response = await fetch(API_URL_CUR_TASK);
+    const data = await response.json();
+
+    const table = document.getElementById("data-table");
+
+    // Получаем названия ключей для заголовков таблицы
+    const headers = Object.keys(data[0]);
+
+    // Создаём заголовок
+    const headerRow = document.createElement("tr");
+    headers.forEach(key => {
+        if (key.toLowerCase() === "url") {}
+        else {
+            const th = document.createElement("th");
+            th.textContent = key;
+            headerRow.appendChild(th);
+        }
+    });
+    table.appendChild(headerRow);
+
+    // Строим строки с данными
+    data.forEach(item => {
+        const row = document.createElement("tr");
+        headers.forEach(key => {
+            const td = document.createElement("td");
+
+            // 👉 Если ключ url — создаем ссылку
+            if (key.toLowerCase() === "name" && item[key]) {
+                const td = document.createElement("td");
+                const a = document.createElement("a");
+                a.href = item["url"];
+                a.textContent = item[key];
+                a.target = "_blank";
+                td.appendChild(a);
+                row.appendChild(td);
+            } 
+            else if (key.toLowerCase() === "url") {
+            }
+            else if (key.toLowerCase() === "fork_status_url" && item[key]) {
+                const td = document.createElement("td");
+                const a = document.createElement("a");
+                a.href = item[key];
+                a.textContent = "status";
+                td.appendChild(a);
+                row.appendChild(td);
+            }
+            else {
+                const td = document.createElement("td");
+                td.textContent = 
+                    typeof item[key] === "object" ? JSON.stringify(item[key]) : item[key];
+                row.appendChild(td);
+            }
+
+            
+        });
+        table.appendChild(row);
+    });
+}
+
+loadTable();
+</script>
+
+</body>
+</html>

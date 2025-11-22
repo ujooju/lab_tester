@@ -1,4 +1,0 @@
-Dependencies:
-* curl
-* openssl
-* git
