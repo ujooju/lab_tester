@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -15,6 +16,7 @@ func ListBranchesHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "failed to parse url values", http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 	forkOwner := r.FormValue("owner")
@@ -28,11 +30,13 @@ func ListBranchesHandler(w http.ResponseWriter, r *http.Request) {
 	}, time.Second*10)
 	if err != nil {
 		http.Error(w, "failed to get forks", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	err = json.Unmarshal(response, &branches)
 	if err != nil {
 		http.Error(w, "failed to unmarshal repsonse", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
@@ -48,6 +52,7 @@ func ListBranchesHandler(w http.ResponseWriter, r *http.Request) {
 	resultBytes, err := json.Marshal(result)
 	if err != nil {
 		http.Error(w, "failed to marshal response", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	w.Write(resultBytes)

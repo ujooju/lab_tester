@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -21,11 +22,13 @@ func ListForksHandler(w http.ResponseWriter, r *http.Request) {
 	}, time.Second*10)
 	if err != nil {
 		http.Error(w, "failed to get forks", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	err = json.Unmarshal(response, &forks)
 	if err != nil {
 		http.Error(w, "failed to unmarshal forks\n"+string(response), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
@@ -46,6 +49,7 @@ func ListForksHandler(w http.ResponseWriter, r *http.Request) {
 	respBytes, err := json.Marshal(resp)
 	if err != nil {
 		http.Error(w, "failed to marshal response", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	w.Write(respBytes)

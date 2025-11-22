@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/ujooju/lab_tester/webInterface/config"
@@ -12,6 +13,7 @@ import (
 func Start() {
 	mux := setMux()
 
+	log.Println("starting server at: ", config.Host+":"+config.Port)
 	http.ListenAndServe(config.Host+":"+config.Port, mux)
 }
 
@@ -28,8 +30,10 @@ func setMux() *http.ServeMux {
 	apiMux.HandleFunc("GET /api/fork-branches", api.ListBranchesHandler)
 	apiMux.HandleFunc("GET /api/list-tests", api.ListTestsHandler)
 	apiMux.HandleFunc("/api/submit", api.SubmitHandler)
-	apiMux.HandleFunc("GET /api/next-test", api.NextTestHandler)
-	//apiMux.HandleFunc("POST /api/report", api.PostReportHandler)
+
+	agentApiMux := http.NewServeMux()
+	agentApiMux.HandleFunc("GET /agent/next-test", api.NextTestHandler)
+	agentApiMux.HandleFunc("POST /agent/report", api.PostReportHandler)
 	//apiMux.HandleFunc("GET /api/report", api.GetReportHandler)
 
 	homeMux := http.NewServeMux()
@@ -39,6 +43,7 @@ func setMux() *http.ServeMux {
 	mux.Handle("/home/", middlewares.AuthMiddleware(homeMux))
 	mux.Handle("/", loginMux)
 	mux.Handle("/api/", middlewares.AuthMiddleware(apiMux))
+	mux.Handle("/agent/", middlewares.AgentApiMiddleware(agentApiMux))
 
 	return mux
 }

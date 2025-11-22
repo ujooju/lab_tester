@@ -8,17 +8,17 @@ import (
 )
 
 var (
-	Host                    string
+	Host                    string //optional. by default: 127.0.0.1
 	Port                    string
-	GiteaURL                string = ""
-	GiteaClientID           string
-	GiteaSecret             string
-	GiteaRedirectURI        string   = ""
-	GiteaOauthCallbackState string   = ""
-	CurrentTaskOwner        string   = ""
-	CurrentTaskName         string   = ""
-	Admins                  []string = []string{}
-	AgentSecret             string
+	GiteaURL                string
+	GiteaClientID           string //oauth
+	GiteaSecret             string //oauth
+	GiteaRedirectURI        string //oauth
+	GiteaOauthCallbackState string //oauth
+	CurrentTaskOwner        string
+	CurrentTaskName         string
+	Admins                  []string = []string{} //f.ex.: LT_ADMINS=gitt,ujooju,admin
+	AgentSecret             string                //must be set manually with env. variable
 )
 
 func Confgure() error {

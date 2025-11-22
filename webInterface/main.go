@@ -15,12 +15,14 @@ func main() {
 		panic(err)
 	}
 	log.Println("Configured seccessfully")
-	log.Println("Initializing daatabase...")
+
+	storage.InitCache()
+
 	err = storage.InitSQLite()
 	if err != nil {
 		panic(err)
 	}
 	defer storage.DB.Close()
-	log.Println("Database initialized")
+
 	server.Start()
 }

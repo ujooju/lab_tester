@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/ujooju/lab_tester/webInterface/models"
 	_ "modernc.org/sqlite"
@@ -10,6 +11,7 @@ import (
 var DB *sql.DB
 
 func InitSQLite() error {
+	log.Println("Initializing database...")
 	var err error
 	DB, err = sql.Open("sqlite", "./lab_tester.db")
 	if err != nil {
@@ -28,6 +30,7 @@ func InitSQLite() error {
 	if err != nil {
 		return err
 	}
+	log.Println("Database initialized")
 	return nil
 }
 
@@ -64,8 +67,21 @@ func NextTest() (models.TestRecord, error) {
 	query := `SELECT id, owner, name, branch, status, report FROM test_records WHERE status = "submited" ORDER BY id ASC`
 	row := DB.QueryRow(query)
 	err := row.Scan(&nextTest.ID, &nextTest.Owner, &nextTest.RepoName, &nextTest.Branch, &nextTest.Status, &nextTest.Report)
+	if err == sql.ErrNoRows {
+		return models.TestRecord{}, nil
+	}
 	if err != nil {
+		log.Println(err.Error())
 		return models.TestRecord{}, err
 	}
 	return nextTest, nil
+}
+
+func UpdateRecord(record *models.TestRecord) error {
+	q := `UPDATE test_records SET status = ?, report = ? WHERE id = ?`
+	_, err := DB.Exec(q, record.Status, record.Report, record.ID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

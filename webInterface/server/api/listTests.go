@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"slices"
 	"time"
@@ -21,11 +22,15 @@ func HasAccess(token string, userName string) bool {
 		"--tls-max":  httpcurl.CurlValue{"1.2"},
 	}, time.Second*10)
 	if err != nil || len(authUserBytes) == 0 {
+		if err != nil {
+			log.Println(err)
+		}
 		return false
 	}
 	var user gitea.User
 	err = json.Unmarshal(authUserBytes, &user)
 	if err != nil {
+		log.Println(err)
 		return false
 	}
 	if user.UserName == userName || slices.Contains(config.Admins, user.UserName) {
@@ -45,11 +50,13 @@ func ListTestsHandler(w http.ResponseWriter, r *http.Request) {
 	testRecords, err := storage.GetTestsByOwnerAndName(owner, name)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	testRecordsBytes, err := json.Marshal(testRecords)
 	if err != nil {
 		http.Error(w, "failed to marshal response", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	w.Write(testRecordsBytes)

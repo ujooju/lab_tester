@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -24,8 +25,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	cookie, err := r.Cookie("lt_user_id")
 	if err == nil {
-		if _, ok := storage.Cache[cookie.Value]; ok {
-			fmt.Println("ooookkkkk")
+		log.Println(err)
+		if _, ok := storage.TokenCache.Get(cookie.Value); ok {
 			http.Redirect(w, r, "/home", http.StatusSeeOther)
 			return
 		}
@@ -62,6 +63,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	accessRequestJSONBytes, err := json.Marshal(accessRequest)
 	if err != nil {
 		http.Error(w, "failed to marshal access request", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
@@ -75,6 +77,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "failed to get access token", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
@@ -82,14 +85,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(response, &accessTokenResponse)
 	if err != nil {
 		http.Error(w, "failed to unmarshal access token response", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
 	userID := uuid.New().String()
-	storage.Cache[userID] = storage.CacheEntity{
-		Token: accessTokenResponse.AccessToken,
-	}
-	fmt.Println(storage.Cache)
+	storage.TokenCache.Set(userID, accessTokenResponse.AccessToken)
 	http.SetCookie(w, &http.Cookie{
 		Name:  "lt_user_id",
 		Value: userID,
