@@ -5,10 +5,11 @@ type Report struct {
 	Text  string `json:"text"`
 }
 
-type TestInfo struct {
-	RepoOwner    string `json:"repo_owner"`
-	RepoName     string `json:"repo_name"`
-	CheckerName  string `json:"checker_name"`
-	CheckerToken string `json:"checker_token"`
-	Branch       string `json:"branch"`
+type TestRecord struct {
+	ID       int    `json:"id"`
+	Owner    string `json:"owner"`
+	RepoName string `json:"name"`
+	Branch   string `json:"branch"`
+	Status   string `json:"status"`
+	Report   string `json:"report"`
 }

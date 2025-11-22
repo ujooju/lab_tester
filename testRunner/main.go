@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/ujooju/lab_tester/testRunner/config"
-	"github.com/ujooju/lab_tester/testRunner/server"
+	"github.com/ujooju/lab_tester/testRunner/runner"
 )
 
 func main() {
@@ -10,5 +10,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	server.StartServer()
+	runner.Run()
 }

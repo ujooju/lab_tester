@@ -29,7 +29,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 func AgentApiMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		token := r.FormValue("agent_secret")
+		token := r.FormValue("agent_token")
 		if token != config.AgentSecret {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return

@@ -16,7 +16,7 @@ import (
 	"github.com/ujooju/lab_tester/testRunner/models"
 )
 
-func RunScript(ctx context.Context, testInfo *models.TestInfo) (models.Report, error) {
+func RunScript(ctx context.Context, testInfo *models.TestRecord) (models.Report, error) {
 	//в скрипт первым параметром передаётся url для клонирования репозитория
 	//url сразу с токеном
 	//вторым параметром ветка
@@ -24,16 +24,19 @@ func RunScript(ctx context.Context, testInfo *models.TestInfo) (models.Report, e
 
 	buf := bytes.NewBufferString("")
 	cmd := exec.CommandContext(ctx,
+		//1 arg. script name
 		config.ScriptLocation+"/"+config.ScriptName,
+		//2 arg. clone url
 		fmt.Sprintf( //making clone url
 			"%s://%s:%s@%s/%s/%s.git",
 			config.GitURLProtoName,
-			testInfo.CheckerName,
-			testInfo.CheckerToken,
+			config.CheckerName,
+			config.CheckerToken,
 			config.GitURLHostName,
-			testInfo.RepoOwner,
+			testInfo.Owner,
 			testInfo.RepoName,
 		),
+		//3 arg. branch name
 		testInfo.Branch,
 	)
 
@@ -80,7 +83,7 @@ func RunScript(ctx context.Context, testInfo *models.TestInfo) (models.Report, e
 	return report, nil
 }
 
-func StartTest(testInfo *models.TestInfo, timeout time.Duration) (models.Report, error) {
+func StartTest(testInfo *models.TestRecord, timeout time.Duration) (models.Report, error) {
 	ctx, _ := context.WithTimeout(context.Background(), timeout)
 	report, err := RunScript(ctx, testInfo)
 	if err != nil {
