@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"log"
 	"os"
 	"regexp"
 )
@@ -31,12 +32,14 @@ func Configure() error {
 	}
 
 	reg := regexp.MustCompile("(.+)://(.+)")
-	matches := reg.FindStringSubmatch("https://infosec24.ru/git")
+	matches := reg.FindStringSubmatch(GitURL)
 	if len(matches) < 3 {
 		return errors.New("invalid GitURL")
 	}
 	GitURLProtoName = matches[1]
 	GitURLHostName = matches[2]
+	log.Println("GitURLProtoName is", GitURLProtoName)
+	log.Println("GitURLHostName is", GitURLHostName)
 
 	if ScriptName == "" {
 		ScriptName = os.Getenv("TR_SCRIPT_NAME")
